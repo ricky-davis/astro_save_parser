@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+  </head>
+  <body>
+    <!-- Note the usage of `type=module` here as this is an ES6 module -->
+    <script type="module">
+        import {process_file, default as init } from './astro_save_editor_wasm.js';
+
+        async function run() {
+            await init('./astro_save_editor_wasm_bg.wasm');
+            window.process_file = process_file;
+        }
+        run();
+        var fileReader = new FileReader();
+        fileReader.onload = e => {
+                    console.log(e);
+                    let data = new Uint8Array(fileReader.result);
+                    var t0 = performance.now()
+                    process_file(fileInputElement.files[0].name, e.total, data);var t1 = performance.now()
+                    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
+                    console.log(data);
+                };
+
+        var fileInputElement = document.getElementById("file-input");
+        fileInputElement.addEventListener("change", e => {
+            console.log(fileInputElement.files);
+            fileReader.readAsArrayBuffer(fileInputElement.files[0])
+        }
+        );
+
+    </script>
+
+    
+    <input type="file" id="file-input"/>
+  </body>
+
+</html>
